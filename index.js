@@ -61,9 +61,6 @@ if (!inputFiles.length) {
     inputFiles = [undefined];
   }
 }
-if (inputFiles.length > 1 && !argv.dir) {
-  throw 'Please specify --dir [output directory] for your files';
-}
 
 // load and configure plugin array
 var plugins = argv.use.map(function(name) {
@@ -107,9 +104,13 @@ async.forEach(inputFiles, compile, onError);
 
 
 function compile(input, fn) {
-  var output = argv.output;
-  if (argv.dir) {
+  var output;
+  if (argv.output) {
+    output = argv.output;
+  } else if (argv.dir) {
     output = path.join(argv.dir, path.basename(input));
+  } else {
+    output = input;
   }
   processCSS(processor, input, output, fn);
 }
